@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <radialGradient id="waterGrad" cx="50%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#192038"/>
+      <stop offset="50%" stop-color="#0e1224"/>
+      <stop offset="100%" stop-color="#04060d"/>
+    </radialGradient>
+    <filter id="lanternGlow">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="800" fill="url(#waterGrad)"/>
+
+  <!-- Water Horizon Line -->
+  <line x1="0" y1="520" x2="1200" y2="520" stroke="#f6c445" stroke-width="1" opacity="0.3"/>
+
+  <!-- Water Reflections -->
+  <ellipse cx="600" cy="620" rx="220" ry="25" fill="#f6c445" opacity="0.2" filter="url(#lanternGlow)"/>
+  <ellipse cx="600" cy="560" rx="140" ry="12" fill="#fff9db" opacity="0.3" filter="url(#lanternGlow)"/>
+
+  <!-- Golden Floating Lantern -->
+  <g transform="translate(600, 380)">
+    <!-- Light halo -->
+    <circle cx="0" cy="0" r="140" fill="#f6c445" opacity="0.25" filter="url(#lanternGlow)"/>
+    <circle cx="0" cy="0" r="80" fill="#fff9db" opacity="0.5" filter="url(#lanternGlow)"/>
+
+    <!-- Lantern Body -->
+    <path d="M -50,-80 L 50,-80 L 70,60 L -70,60 Z" fill="#ffd166" opacity="0.85" filter="url(#lanternGlow)"/>
+    <!-- Lantern Roof -->
+    <path d="M -65,-80 L 65,-80 L 0,-115 Z" fill="#b8861b"/>
+    <!-- Lantern Base -->
+    <rect x="-75" y="60" width="150" height="15" rx="4" fill="#b8861b"/>
+    <!-- Inner Flame -->
+    <ellipse cx="0" cy="-5" rx="18" ry="35" fill="#ffffff" filter="url(#lanternGlow)"/>
+  </g>
+
+  <!-- Distant Lanterns in the sky -->
+  <g filter="url(#lanternGlow)">
+    <circle cx="360" cy="240" r="12" fill="#ffd166" opacity="0.7"/>
+    <circle cx="480" cy="180" r="8" fill="#ffd166" opacity="0.6"/>
+    <circle cx="780" cy="220" r="14" fill="#ffd166" opacity="0.7"/>
+    <circle cx="890" cy="160" r="9" fill="#ffd166" opacity="0.5"/>
+    <circle cx="220" cy="310" r="10" fill="#ffd166" opacity="0.6"/>
+    <circle cx="980" cy="280" r="11" fill="#ffd166" opacity="0.6"/>
+  </g>
+
+  <!-- Film Frame -->
+  <rect x="25" y="25" width="1150" height="750" fill="none" stroke="#f6c445" stroke-width="2" opacity="0.35"/>
+  <text x="600" y="110" font-family="'Cinzel', serif" font-size="28" font-weight="bold" fill="#f6c445" text-anchor="middle" letter-spacing="8" opacity="0.9">A CONSTANT ANCHOR</text>
+  <text x="600" y="740" font-family="'Montserrat', sans-serif" font-size="16" fill="#fff" text-anchor="middle" letter-spacing="4" opacity="0.8">IN EVERY STORM, YOU ARE OUR PEACE AND OUR LIGHT</text>
+</svg>

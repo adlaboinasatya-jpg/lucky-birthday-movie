@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <radialGradient id="heartGrad" cx="50%" cy="48%" r="65%">
+      <stop offset="0%" stop-color="#3d152a"/>
+      <stop offset="40%" stop-color="#240c1d"/>
+      <stop offset="80%" stop-color="#0f0512"/>
+      <stop offset="100%" stop-color="#050107"/>
+    </radialGradient>
+    <filter id="heartGlow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="800" fill="url(#heartGrad)"/>
+
+  <!-- Golden Radiant Heart Shape -->
+  <g transform="translate(600, 420)" filter="url(#heartGlow)">
+    <!-- Outer Glow Heart -->
+    <path d="M 0, -40 
+             C -90, -180 -260, -120 -260, 40 
+             C -260, 160 -120, 240 0, 320 
+             C 120, 240 260, 160 260, 40 
+             C 260, -120 90, -180 0, -40 Z" 
+          fill="none" stroke="#f6c445" stroke-width="4" opacity="0.8"/>
+    
+    <!-- Inner Shimmering Heart -->
+    <path d="M 0, -25 
+             C -70, -140 -200, -90 -200, 35 
+             C -200, 130 -90, 190 0, 260 
+             C 90, 190 200, 130 200, 35 
+             C 200, -90 70, -140 0, -25 Z" 
+          fill="rgba(255, 107, 139, 0.2)" stroke="#ffea9f" stroke-width="2"/>
+    
+    <!-- Central Light Core -->
+    <circle cx="0" cy="50" r="45" fill="#fff9db" opacity="0.9"/>
+  </g>
+
+  <!-- Floating Sparkles & Light Orbs -->
+  <circle cx="340" cy="280" r="14" fill="#ffd166" opacity="0.6" filter="url(#heartGlow)"/>
+  <circle cx="860" cy="260" r="18" fill="#ffd166" opacity="0.6" filter="url(#heartGlow)"/>
+  <circle cx="280" cy="520" r="12" fill="#ff758c" opacity="0.5" filter="url(#heartGlow)"/>
+  <circle cx="920" cy="500" r="16" fill="#ff758c" opacity="0.5" filter="url(#heartGlow)"/>
+
+  <!-- Film Frame -->
+  <rect x="25" y="25" width="1150" height="750" fill="none" stroke="#f6c445" stroke-width="2" opacity="0.35"/>
+  <text x="600" y="110" font-family="'Cinzel', serif" font-size="28" font-weight="bold" fill="#f6c445" text-anchor="middle" letter-spacing="8" opacity="0.9">CHAPTER III • THE HEARTBEATS</text>
+  <text x="600" y="740" font-family="'Montserrat', sans-serif" font-size="16" fill="#fff" text-anchor="middle" letter-spacing="4" opacity="0.8">YOUR GENTLE KINDNESS LIGHTS UP EVERY ROOM</text>
+</svg>

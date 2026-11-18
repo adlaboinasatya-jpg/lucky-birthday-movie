@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>The Birthday Cinematic Movie | A Special Premiere</title>
+  <meta name="description" content="A magical cinematic movie experience created for the most special person. Happy Birthday!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- YouTube IFrame API for automatic Inthandham soundtrack playback -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+  <!-- Inthandham Official Audio Player (Hidden background stream) -->
+  <div id="yt-inthandham-player" style="position:fixed; top:-9999px; left:-9999px; width:1px; height:1px; opacity:0; pointer-events:none;"></div>
+
+  <!-- Audio Element Fallback -->
+  <audio id="bg-audio" loop preload="auto"></audio>
+
+  <!-- Canvas Layers: Stardust, Bokeh, Fireworks, Confetti -->
+  <canvas id="cinema-canvas"></canvas>
+  <canvas id="fireworks-canvas"></canvas>
+
+  <!-- Film Overlay: Grain, Vignette & Light Leaks -->
+  <div class="film-grain-overlay" aria-hidden="true"></div>
+  <div class="film-vignette" aria-hidden="true"></div>
+  <div class="light-leak-effect" id="light-leak" aria-hidden="true"></div>
+
+  <!-- Cinema Letterbox Bars (Cinemascope 2.39:1) -->
+  <div class="cinemascope-bar top-bar">
+    <div class="camera-info">
+      <span class="rec-dot">● REC</span>
+      <span class="tc-text" id="timecode">00:00:00:00</span>
+      <span class="fps-text">24.000 FPS &bull; 4K CINEMASCOPE</span>
+    </div>
+    <div class="top-nav-controls">
+      <button class="nav-btn" id="btn-director" title="Director's Studio (Edit Photos & Names)">
+        <span class="icon">🎬</span> Director's Studio
+      </button>
+      <button class="nav-btn" id="btn-fullscreen" title="Toggle Fullscreen">
+        <span class="icon">⛶</span> Fullscreen
+      </button>
+      <button class="nav-btn" id="btn-sound-toggle" title="Toggle Audio Experience">
+        <span class="icon" id="sound-icon">🔊</span> Sound
+      </button>
+    </div>
+  </div>
+  <div class="cinemascope-bar bottom-bar">
+    <div class="cinemascope-label">A SOULFUL CINEMA PRODUCTION &bull; COMMEMORATIVE EDITION</div>
+  </div>
+
+  <!-- MAIN CINEMA CONTAINER -->
+  <main class="cinema-viewport">
+
+    <!-- ==============================================
+         STAGE 0: PRE-SHOW TICKET BOOTH (VIP TICKET)
+         ============================================== -->
+    <section class="screen-stage active" id="stage-ticket">
+      <div class="ticket-backdrop-glow"></div>
+      
+      <!-- Dynamic Floating 35mm Film Strip Marquee (Replicating img1 & img2) -->
+      <div class="film-marquee-container" id="ticket-film-marquee">
+        <div class="film-marquee-track" id="ticket-film-track">
+          <!-- Populated dynamically with rolling 35mm photo frames -->
+        </div>
+      </div>
+
+      <div class="ticket-container">
+        <div class="premiere-badge">EXCLUSIVE WORLD PREMIERE</div>
+        <h1 class="premiere-title">THE BIRTHDAY CINEMATIC MOVIE</h1>
+        <p class="premiere-subtitle">A life-changing story captured in 24 frames of pure golden light</p>
+
+        <!-- Golden VIP Ticket Card -->
+        <div class="vip-ticket" id="vip-ticket-card">
+          <div class="ticket-stub-left">
+            <div class="stub-stars">★★★★★</div>
+            <div class="ticket-admit">ADMIT ONE</div>
+            <div class="ticket-barcode">
+              <span>||| | |||| | ||| |||| || ||| |</span>
+            </div>
+            <div class="ticket-seat">VIP FRONT ROW</div>
+          </div>
+          <div class="ticket-stub-divider">
+            <span class="notch top-notch"></span>
+            <span class="dashed-line"></span>
+            <span class="notch bottom-notch"></span>
+          </div>
+          <div class="ticket-main-body">
+            <div class="ticket-header-row">
+              <span class="cinema-brand">🌟 CELESTIAL CINEMA STUDIOS</span>
+              <span class="ticket-number">NO. 884-LOVE</span>
+            </div>
+            <div class="ticket-feature">NOW SHOWING</div>
+            <h2 class="ticket-movie-name" id="ticket-recipient-display">THE MOST SPECIAL PERSON</h2>
+            <div class="ticket-details-grid">
+              <div class="ticket-field">
+                <span class="label">DATE</span>
+                <span class="value" id="ticket-date-display">SPECIAL DAY</span>
+              </div>
+              <div class="ticket-field">
+                <span class="label">TIME</span>
+                <span class="value">GOLDEN HOUR</span>
+              </div>
+              <div class="ticket-field">
+                <span class="label">GENRE</span>
+                <span class="value">MAGIC & WONDER</span>
+              </div>
+              <div class="ticket-field">
+                <span class="label">SOUNDTRACK</span>
+                <span class="value">INTHANDHAM 🎵</span>
+              </div>
+            </div>
+            <div class="ticket-quote">"Some lives aren't just lived — they shine like an eternal masterpiece."</div>
+          </div>
+        </div>
+
+        <div class="ticket-actions">
+          <button class="cinema-gold-btn play-movie-btn" id="btn-start-movie">
+            <span class="btn-shine"></span>
+            <span class="btn-icon">▶</span>
+            <span class="btn-text">START THE MOVIE</span>
+          </button>
+          <button class="cinema-outline-btn" id="btn-open-director-from-start">
+            <span class="btn-icon">✏️</span> Customize Photos & Details
+          </button>
+        </div>
+        
+        <p class="headphone-tip">🎧 Best experienced with headphones & in fullscreen mode</p>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         STAGE 1: OPENING CREDITS & LEADER COUNTDOWN
+         ============================================== -->
+    <section class="screen-stage" id="stage-countdown">
+      <div class="countdown-overlay">
+        <!-- Studio Logo Slate -->
+        <div class="studio-slate" id="studio-slate">
+          <div class="studio-emblem">✨</div>
+          <h2 class="studio-title">CELESTIAL MOTION PICTURES</h2>
+          <div class="studio-sub">PRESENTS</div>
+        </div>
+
+        <!-- 35mm Leader Countdown (5, 4, 3, 2, 1) -->
+        <div class="leader-countdown-box" id="leader-countdown-box">
+          <div class="countdown-crosshair vertical"></div>
+          <div class="countdown-crosshair horizontal"></div>
+          <div class="countdown-radar-sweep"></div>
+          <div class="countdown-circles">
+            <div class="outer-ring"></div>
+            <div class="inner-ring"></div>
+          </div>
+          <div class="countdown-number" id="countdown-num">5</div>
+        </div>
+
+        <!-- Dramatic Hollywood Rolling Credits Sequence -->
+        <div class="rolling-credits-slate" id="rolling-credits-slate">
+          <div class="credit-card" id="credit-card-1">
+            <span class="credit-role">A SOULFUL PRODUCTION</span>
+            <span class="credit-name">HONORING A ONE-OF-A-KIND LIFE</span>
+          </div>
+          <div class="credit-card" id="credit-card-2">
+            <span class="credit-role">ORIGINAL MOTION PICTURE SOUNDTRACK</span>
+            <span class="credit-name">"INTHANDHAM" (SITA RAMAM)</span>
+          </div>
+          <div class="credit-card" id="credit-card-3">
+            <span class="credit-role">STARRING</span>
+            <span class="credit-name gold-highlight" id="credit-starring-name">THE MOST SPECIAL PERSON</span>
+          </div>
+          <div class="credit-card" id="credit-card-4">
+            <span class="credit-role">DIRECTED WITH ENDLESS LOVE BY</span>
+            <span class="credit-name" id="credit-director-name">YOUR BIGGEST FAN</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         STAGE 2: THE MOVIE CHAPTERS & CINEMATIC PHOTO REEL
+         ============================================== -->
+    <section class="screen-stage" id="stage-movie">
+      <!-- Chapter Title Card (Fades in at start of chapter) -->
+      <div class="chapter-title-card" id="chapter-title-card">
+        <div class="chapter-number" id="chapter-number-display">CHAPTER I</div>
+        <h2 class="chapter-headline" id="chapter-headline-display">THE PROLOGUE</h2>
+        <div class="chapter-quote" id="chapter-quote-display">"When the universe was blessed with your radiant light"</div>
+        <div class="chapter-divider-gold"></div>
+      </div>
+
+      <!-- Main Cinematic Slide Display -->
+      <div class="cinema-slide-container" id="cinema-slide-container">
+        <!-- Floating 3D Film Frame -->
+        <div class="film-3d-wrapper" id="film-frame-wrapper">
+          <div class="filmstrip-edge left-edge">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+
+          <div class="cinematic-photo-viewport">
+            <div class="photo-kenburns-container" id="photo-kenburns">
+              <img id="current-movie-photo" src="assets/img2.jpg" alt="Cinematic Birthday Moment" class="active-photo">
+            </div>
+            
+            <!-- Lens Flare & Lighting Shimmer -->
+            <div class="slide-lighting-shimmer"></div>
+            
+            <!-- On-Screen Movie Info Stamp -->
+            <div class="film-stamp-overlay">
+              <span class="stamp-scene" id="stamp-scene-num">SCENE 01 / TAKE 01</span>
+              <span class="stamp-date" id="stamp-date">EASTMAN KODAK 5247</span>
+            </div>
+          </div>
+
+          <div class="filmstrip-edge right-edge">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+        </div>
+
+        <!-- Emotional Cinematic Subtitles / Dialogue -->
+        <div class="cinematic-caption-holder">
+          <div class="caption-tag" id="caption-chapter-tag">CHAPTER I &bull; THE BEGINNING</div>
+          <p class="cinematic-subtitle" id="cinematic-subtitle-text">
+            "From the moment your story began, the world became brighter, warmer, and endlessly more wonderful."
+          </p>
+        </div>
+      </div>
+
+      <!-- Cinema Playback HUD & Progress Bar -->
+      <div class="cinema-playback-hud">
+        <div class="timeline-container">
+          <div class="timeline-segments" id="timeline-segments">
+            <!-- Dynamically populated scene segment bars -->
+          </div>
+        </div>
+
+        <div class="hud-controls-row">
+          <div class="hud-left">
+            <span class="scene-counter" id="scene-counter-display">SCENE 1 / 8</span>
+            <span class="chapter-tag-mini" id="chapter-tag-mini">PROLOGUE</span>
+          </div>
+
+          <div class="hud-center">
+            <button class="hud-btn" id="hud-prev" title="Previous Scene">⏮</button>
+            <button class="hud-btn hud-play-pause" id="hud-play-pause" title="Pause / Play">⏸</button>
+            <button class="hud-btn" id="hud-next" title="Next Scene">⏭</button>
+          </div>
+
+          <div class="hud-right">
+            <button class="hud-btn hud-text-btn" id="btn-skip-climax">Skip to Grand Finale ⏭</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         STAGE 3: GRAND CLIMAX & CELEBRATION
+         ============================================== -->
+    <section class="screen-stage" id="stage-climax">
+      <div class="climax-backdrop-flare"></div>
+
+      <div class="climax-scrollable-content">
+        <!-- Floating Filmstrip Banner (img3 style banner) -->
+        <div class="climax-filmstrip-banner">
+          <img src="assets/img3.jpg" alt="Happy Birthday Film Strip" class="climax-film-card-img">
+          <div class="cake-banner-lucky-badge">✨ FOR OUR SPECIAL STAR: LUCKY ✨</div>
+        </div>
+
+        <!-- GRAND FINALE TITLE -->
+        <div class="grand-title-container">
+          <div class="gold-halo-light"></div>
+          <div class="climax-badge">🌟 SPECIAL PRESENTATION 🌟</div>
+          <h1 class="grand-movie-title" id="grand-title-display">
+            THE MOST SPECIAL PERSON<br>
+            <span class="gold-shimmer-text">HAPPY BIRTHDAY!</span>
+          </h1>
+          <p class="climax-tagline" id="climax-tagline-display">
+            Today and every day, may your life be filled with love, boundless laughter, and cinematic magic!
+          </p>
+        </div>
+
+        <!-- INTERACTIVE BIRTHDAY CAKE WITH BLOWABLE CANDLES -->
+        <div class="interactive-cake-box">
+          <div class="cake-instructions">
+            <span class="sparkle-anim">✨</span> Make a wish in your heart, then tap to blow the candles! <span class="sparkle-anim">✨</span>
+          </div>
+
+          <div class="cinematic-cake" id="cinematic-cake-element">
+            <div class="candles-row">
+              <div class="candle" data-candle="1">
+                <div class="flame" id="flame-1"></div>
+                <div class="smoke" id="smoke-1"></div>
+                <div class="wick"></div>
+                <div class="candle-body gold-stripe"></div>
+              </div>
+              <div class="candle" data-candle="2">
+                <div class="flame" id="flame-2"></div>
+                <div class="smoke" id="smoke-2"></div>
+                <div class="wick"></div>
+                <div class="candle-body pink-stripe"></div>
+              </div>
+              <div class="candle" data-candle="3">
+                <div class="flame" id="flame-3"></div>
+                <div class="smoke" id="smoke-3"></div>
+                <div class="wick"></div>
+                <div class="candle-body gold-stripe"></div>
+              </div>
+            </div>
+            <div class="cake-tier tier-top">
+              <div class="cake-frosting-drip"></div>
+              <div class="cake-cherries">🍒 &bull; 🍓 &bull; 🍒</div>
+            </div>
+            <div class="cake-tier tier-middle">
+              <div class="cake-icing-decor">✦ HAPPY BIRTHDAY ✦</div>
+              <div class="cake-name-decor">LUCKY</div>
+            </div>
+            <div class="cake-tier tier-bottom">
+              <div class="gold-ribbon-line"></div>
+            </div>
+            <div class="cake-stand"></div>
+          </div>
+
+          <button class="cinema-gold-btn blow-candles-btn" id="btn-blow-candles">
+            <span class="btn-shine"></span>
+            🎂 Blow Candles & Make a Wish!
+          </button>
+        </div>
+
+        <!-- EMOTIONAL DIRECTOR'S LETTER / SCROLL -->
+        <div class="directors-scroll-container">
+          <div class="scroll-header">
+            <span class="wax-seal">⚜️</span>
+            <h3 class="scroll-title">A Message From The Director's Heart</h3>
+            <div class="scroll-sub">READ WITH LOVE</div>
+          </div>
+          <div class="scroll-body" id="scroll-letter-text">
+            Dearest <span class="recipient-name-inline">Special One</span>,<br><br>
+            If our life were a film, you would be every breathtaking frame, every unforgettable scene, and the warmth in every melody.<br><br>
+            Thank you for being the kind of person who lights up every room just by being yourself. Your kindness, your infectious laughter, and your gentle heart make this world infinitely more beautiful.<br><br>
+            On your birthday, I wish you an ocean of happiness, countless moments that take your breath away, and dreams that unfold into wondrous realities.<br><br>
+            Keep shining your magnificent light. You are truly irreplaceable.<br><br>
+            <strong>With all my love and admiration,</strong><br>
+            <span class="director-name-inline">Your Biggest Fan</span> ❤️
+          </div>
+        </div>
+
+        <!-- PHOTO HIGHLIGHT GALLERY / STORYBOARD GRID -->
+        <div class="storyboard-gallery-section">
+          <h3 class="storyboard-heading">🎞️ THE STORYBOARD MEMORIES</h3>
+          <p class="storyboard-sub">Every chapter of this journey with you</p>
+          <div class="storyboard-grid" id="storyboard-thumbnails-grid">
+            <!-- Populated dynamically with all 8 scene frames -->
+          </div>
+        </div>
+
+        <!-- FINALE ACTION BUTTONS -->
+        <div class="finale-actions-row">
+          <button class="cinema-gold-btn" id="btn-replay-movie">
+            <span class="btn-shine"></span> 🔄 Replay Movie
+          </button>
+          <button class="cinema-outline-btn" id="btn-open-director-finale">
+            ✏️ Customize Movie & Photos
+          </button>
+          <button class="cinema-outline-btn" id="btn-launch-fireworks">
+            🎆 Launch More Fireworks!
+          </button>
+        </div>
+
+        <div class="credits-footer">
+          <p>PRODUCED WITH ENDLESS LOVE &bull; THE BIRTHDAY CINEMATIC MOVIE &bull; FOREVER & ALWAYS</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==============================================
+       SPOTIFY MUSIC FLOATING DOCK (FEATURING "INTHANDHAM")
+       ============================================== -->
+  <aside class="spotify-cinema-dock" id="spotify-dock">
+    <div class="dock-toggle-btn" id="dock-toggle" title="Toggle Music Player">
+      <span class="music-note-icon">🎵</span>
+      <span class="dock-label">SOUNDTRACK</span>
+    </div>
+    
+    <div class="dock-expanded-content">
+      <div class="dock-track-header">
+        <div class="track-artwork">
+          <div class="vinyl-record spinning" id="vinyl-art">
+            <span class="vinyl-center">💿</span>
+          </div>
+        </div>
+        <div class="track-meta">
+          <div class="track-badge">SPOTIFY OFFICIAL TRACK</div>
+          <div class="track-title" title="Inthandham">Inthandham (Sita Ramam)</div>
+          <div class="track-artists">Vishal Chandrashekhar &bull; S.P. Charan</div>
+        </div>
+      </div>
+
+      <!-- Spotify Official Iframe Embed -->
+      <div class="spotify-iframe-box">
+        <iframe 
+          id="spotify-iframe"
+          style="border-radius:12px; border:none; width: 100%; height: 80px;" 
+          src="https://open.spotify.com/embed/track/3BVjPpVvki8Jpm1Ew21UjH?utm_source=generator&theme=0" 
+          width="100%" 
+          height="80" 
+          allowfullscreen="" 
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <!-- Audio Track Controller -->
+      <div class="dock-sound-controls">
+        <div class="eq-bars active" id="audio-eq-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="sound-mode-switch">
+          <label class="chip-btn upload-audio-label" for="custom-audio-input">
+            📁 Play Custom Audio File
+            <input type="file" id="custom-audio-input" accept="audio/*" style="display:none;">
+          </label>
+        </div>
+      </div>
+
+      <div class="spotify-external-link">
+        <a href="https://open.spotify.com/track/3BVjPpVvki8Jpm1Ew21UjH?si=862fbd3a077e4e2f" target="_blank" rel="noopener noreferrer">
+          Open "Inthandham" directly on Spotify ↗
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==============================================
+       DIRECTOR'S STUDIO MODAL (CUSTOMIZE PHOTOS & TEXT)
+       ============================================== -->
+  <div class="modal-overlay" id="director-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <span class="clapper-icon">🎬</span>
+          <div>
+            <h3>Director's Studio</h3>
+            <p>Personalize this movie for the birthday star with your own photos and words</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btn-close-director">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tab Navigation -->
+        <div class="studio-tabs">
+          <button class="tab-btn active" data-tab="tab-details">1. Movie Details & Star</button>
+          <button class="tab-btn" data-tab="tab-photos">2. Scene Photos & Captions</button>
+          <button class="tab-btn" data-tab="tab-letter">3. Love Letter & Finale</button>
+        </div>
+
+        <!-- TAB 1: Star Details -->
+        <div class="tab-pane active" id="tab-details">
+          <div class="form-group">
+            <label for="input-recipient-name">Birthday Star's Name</label>
+            <input type="text" id="input-recipient-name" class="form-input" placeholder="e.g. Maya, Alex, My Love, Bestie">
+          </div>
+          <div class="form-group">
+            <label for="input-birthday-date">Birthday Date / Milestone</label>
+            <input type="text" id="input-birthday-date" class="form-input" placeholder="e.g. November 18, 2026 / 25th Birthday">
+          </div>
+          <div class="form-group">
+            <label for="input-director-name">Directed By (Your Name / Signature)</label>
+            <input type="text" id="input-director-name" class="form-input" placeholder="e.g. Satya, With All My Heart, Your Best Friend">
+          </div>
+          <div class="form-group">
+            <label for="input-custom-tagline">Finale Grand Tagline</label>
+            <input type="text" id="input-custom-tagline" class="form-input" placeholder="e.g. Today and every day, you deserve the whole universe!">
+          </div>
+        </div>
+
+        <!-- TAB 2: Photo Storyboard Manager (8 Scenes) -->
+        <div class="tab-pane" id="tab-photos">
+          <p class="tab-hint">
+            Upload custom photos for each scene or enter image URLs. Changes are saved instantly!
+          </p>
+          <div class="scenes-editor-list" id="scenes-editor-list">
+            <!-- Dynamically populated with 8 scene editors -->
+          </div>
+        </div>
+
+        <!-- TAB 3: Letter & Message -->
+        <div class="tab-pane" id="tab-letter">
+          <div class="form-group">
+            <label for="input-letter-content">Personal Director's Letter (Scroll Message)</label>
+            <textarea id="input-letter-content" class="form-textarea" rows="8" placeholder="Write your heartfelt message here..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cinema-outline-btn" id="btn-reset-defaults">↺ Reset to Default Movie</button>
+        <button class="cinema-gold-btn" id="btn-save-director">💾 Save & Preview Movie</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cinematic Notification Toast -->
+  <div class="cinema-toast" id="cinema-toast"></div>
+
+  <!-- Application Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
