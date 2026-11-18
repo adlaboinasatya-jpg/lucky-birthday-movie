@@ -1170,8 +1170,10 @@ Your Biggest Fan ❤️`,
   }
 
   // ==========================================================================
-  // INTHANDHAM SOUNDTRACK & SPOTIFY / YOUTUBE ENGINE
+  // INTHANDHAM SOUNDTRACK ENGINE (BACKGROUND PLAYBACK, NO FLOATING DOCK)
   // ==========================================================================
+  let pendingPlayInthandham = false;
+
   window.onYouTubeIframeAPIReady = function() {
     try {
       ytPlayer = new YT.Player('yt-inthandham-player', {
@@ -1189,6 +1191,13 @@ Your Biggest Fan ❤️`,
         events: {
           onReady: function() {
             isYtReady = true;
+            if (pendingPlayInthandham && !isMuted) {
+              try {
+                ytPlayer.unMute();
+                ytPlayer.setVolume(100);
+                ytPlayer.playVideo();
+              } catch (err) {}
+            }
           }
         }
       });
@@ -1199,10 +1208,11 @@ Your Biggest Fan ❤️`,
 
   function playInthandhamSong() {
     isMuted = false;
+    pendingPlayInthandham = true;
     const soundIcon = document.getElementById('sound-icon');
     if (soundIcon) soundIcon.textContent = '🔊';
 
-    // 1. Play full official Inthandham audio stream
+    // Play full official Inthandham audio stream
     if (ytPlayer && ytPlayer.playVideo) {
       try {
         ytPlayer.unMute();
@@ -1213,27 +1223,21 @@ Your Biggest Fan ❤️`,
       }
     }
 
-    // 2. Trigger Spotify embed iframe with autoplay
-    const spotifyIframe = document.getElementById('spotify-iframe');
-    if (spotifyIframe) {
-      spotifyIframe.src = "https://open.spotify.com/embed/track/3BVjPpVvki8Jpm1Ew21UjH?utm_source=generator&theme=0&autoplay=1";
-    }
-
-    // 3. Activate visualizer in the dock
     if (vinylArt) vinylArt.classList.add('spinning');
     if (audioEqBars) audioEqBars.classList.add('active');
     showToast("🎵 Playing: Inthandham (Sita Ramam)");
   }
 
   function setupSpotifyDock() {
-    // Start collapsed on mobile / tablet to prevent covering controls
-    if (window.innerWidth <= 768) {
+    if (spotifyDock && window.innerWidth <= 768) {
       spotifyDock.classList.add('collapsed');
     }
 
-    dockToggle.addEventListener('click', () => {
-      spotifyDock.classList.toggle('collapsed');
-    });
+    if (dockToggle && spotifyDock) {
+      dockToggle.addEventListener('click', () => {
+        spotifyDock.classList.toggle('collapsed');
+      });
+    }
 
     if (customAudioInput) {
       customAudioInput.addEventListener('change', (e) => {
@@ -1243,8 +1247,8 @@ Your Biggest Fan ❤️`,
           bgAudio.src = url;
           bgAudio.play();
           if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
-          vinylArt.classList.add('spinning');
-          audioEqBars.classList.add('active');
+          if (vinylArt) vinylArt.classList.add('spinning');
+          if (audioEqBars) audioEqBars.classList.add('active');
           showToast(`🎵 Playing Custom Track: ${file.name}`);
         }
       });
@@ -1295,13 +1299,13 @@ Your Biggest Fan ❤️`,
       if (isMuted) {
         if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
         if (bgAudio) bgAudio.pause();
-        audioEqBars.classList.remove('active');
-        vinylArt.classList.remove('spinning');
+        if (audioEqBars) audioEqBars.classList.remove('active');
+        if (vinylArt) vinylArt.classList.remove('spinning');
         showToast("Audio Muted");
       } else {
         if (ytPlayer && ytPlayer.playVideo) ytPlayer.playVideo();
-        audioEqBars.classList.add('active');
-        vinylArt.classList.add('spinning');
+        if (audioEqBars) audioEqBars.classList.add('active');
+        if (vinylArt) vinylArt.classList.add('spinning');
         showToast("Audio Unmuted");
       }
     });
