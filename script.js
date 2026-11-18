@@ -13,7 +13,7 @@
   // ==========================================================================
   const DEFAULT_CONFIG = {
     recipientName: "Leela",
-    birthdayDate: "November 18, 2026",
+    birthdayDate: "November 23, 2026",
     directorName: "With All My Heart",
     finaleTagline: "To the most radiant soul who brings warmth and starlight into every day: May your life be filled with endless joy, magic, and sweet miracles!",
     letterContent: `Dearest Leela,
@@ -309,7 +309,7 @@ Your Biggest Fan ❤️`,
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.scenes && parsed.scenes.length === DEFAULT_CONFIG.scenes.length) {
-          return {
+          const merged = {
             ...DEFAULT_CONFIG,
             ...parsed,
             scenes: DEFAULT_CONFIG.scenes.map((defaultScene, idx) => {
@@ -317,6 +317,10 @@ Your Biggest Fan ❤️`,
               return { ...defaultScene, ...saved };
             })
           };
+          if (merged.birthdayDate === "November 18, 2026") {
+            merged.birthdayDate = DEFAULT_CONFIG.birthdayDate;
+          }
+          return merged;
         }
       }
     } catch (e) {
