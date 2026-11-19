@@ -1174,56 +1174,46 @@ Your Biggest Fan ❤️`,
   }
 
   // ==========================================================================
-  // INTHANDHAM SOUNDTRACK ENGINE (BACKGROUND PLAYBACK, NO FLOATING DOCK)
+  // INTHANDHAM SOUNDTRACK ENGINE (LOCAL DIRECT MP3 PLAYBACK)
   // ==========================================================================
-  let pendingPlayInthandham = false;
+  let audioPrimed = false;
 
-  window.onYouTubeIframeAPIReady = function() {
-    try {
-      ytPlayer = new YT.Player('yt-inthandham-player', {
-        height: '1',
-        width: '1',
-        videoId: '9g2tgsYDUnE', // Official "Inthandham" from Sita Ramam
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          loop: 1,
-          playlist: '9g2tgsYDUnE',
-          enablejsapi: 1,
-          playsinline: 1
-        },
-        events: {
-          onReady: function() {
-            isYtReady = true;
-            if (pendingPlayInthandham && !isMuted) {
-              try {
-                ytPlayer.unMute();
-                ytPlayer.setVolume(100);
-                ytPlayer.playVideo();
-              } catch (err) {}
-            }
-          }
-        }
-      });
-    } catch (e) {
-      console.warn("YouTube player setup:", e);
+  // Prime / unlock audio playback on mobile browsers on first interaction
+  function primeAudioOnFirstGesture() {
+    if (audioPrimed) return;
+    audioPrimed = true;
+    if (bgAudio) {
+      bgAudio.load();
     }
-  };
+  }
+  document.addEventListener('touchstart', primeAudioOnFirstGesture, { once: true, passive: true });
+  document.addEventListener('pointerdown', primeAudioOnFirstGesture, { once: true, passive: true });
 
   function playInthandhamSong() {
     isMuted = false;
-    pendingPlayInthandham = true;
     const soundIcon = document.getElementById('sound-icon');
     if (soundIcon) soundIcon.textContent = '🔊';
 
-    // Play full official Inthandham audio stream
-    if (ytPlayer && ytPlayer.playVideo) {
-      try {
-        ytPlayer.unMute();
-        ytPlayer.setVolume(100);
-        ytPlayer.playVideo();
-      } catch (err) {
-        console.warn("YouTube playback attempt:", err);
+    // Play direct local audio file: 100% reliable on cold boot & any device
+    if (bgAudio) {
+      bgAudio.volume = 1.0;
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log("Inthandham soundtrack started playing successfully.");
+        }).catch(err => {
+          console.warn("Direct HTML5 audio playback prevented or deferred:", err);
+          // Retry on next touch if browser policy temporarily blocked it
+          const retryOnTouch = () => {
+            if (!isMuted && bgAudio.paused) {
+              bgAudio.play().catch(() => {});
+            }
+            document.removeEventListener('click', retryOnTouch);
+            document.removeEventListener('touchstart', retryOnTouch);
+          };
+          document.addEventListener('click', retryOnTouch, { once: true });
+          document.addEventListener('touchstart', retryOnTouch, { once: true });
+        });
       }
     }
 
@@ -1297,22 +1287,29 @@ Your Biggest Fan ❤️`,
 
     const soundToggleBtn = document.getElementById('btn-sound-toggle');
     const soundIcon = document.getElementById('sound-icon');
-    soundToggleBtn.addEventListener('click', () => {
-      isMuted = !isMuted;
-      soundIcon.textContent = isMuted ? '🔇' : '🔊';
-      if (isMuted) {
-        if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
-        if (bgAudio) bgAudio.pause();
-        if (audioEqBars) audioEqBars.classList.remove('active');
-        if (vinylArt) vinylArt.classList.remove('spinning');
-        showToast("Audio Muted");
-      } else {
-        if (ytPlayer && ytPlayer.playVideo) ytPlayer.playVideo();
-        if (audioEqBars) audioEqBars.classList.add('active');
-        if (vinylArt) vinylArt.classList.add('spinning');
-        showToast("Audio Unmuted");
-      }
-    });
+    if (soundToggleBtn) {
+      soundToggleBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        if (soundIcon) soundIcon.textContent = isMuted ? '🔇' : '🔊';
+        if (isMuted) {
+          if (bgAudio) bgAudio.pause();
+          if (ytPlayer && ytPlayer.pauseVideo) {
+            try { ytPlayer.pauseVideo(); } catch (e) {}
+          }
+          if (audioEqBars) audioEqBars.classList.remove('active');
+          if (vinylArt) vinylArt.classList.remove('spinning');
+          showToast("Audio Muted");
+        } else {
+          if (bgAudio) bgAudio.play().catch(() => {});
+          if (ytPlayer && ytPlayer.playVideo) {
+            try { ytPlayer.playVideo(); } catch (e) {}
+          }
+          if (audioEqBars) audioEqBars.classList.add('active');
+          if (vinylArt) vinylArt.classList.add('spinning');
+          showToast("Audio Unmuted");
+        }
+      });
+    }
 
     document.getElementById('hud-prev').addEventListener('click', () => {
       goToScene(currentSceneIndex - 1);
@@ -1336,6 +1333,10 @@ Your Biggest Fan ❤️`,
     const btnReplay = document.getElementById('btn-replay-movie');
     if (btnReplay) {
       btnReplay.addEventListener('click', () => {
+        if (bgAudio) {
+          bgAudio.currentTime = 0;
+          if (!isMuted) bgAudio.play().catch(() => {});
+        }
         startOpeningCreditsSequence();
       });
     }
